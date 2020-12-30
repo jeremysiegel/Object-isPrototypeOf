@@ -1,0 +1,75 @@
+<script src="simpletest.js"></script>
+<script>
+
+function isPrototypeOf(prototypeObj, object) {
+  if (prototypeObj === undefined) {
+    throw new TypeError('prototypeObj cannot be undefined');
+
+  } else if (prototypeObj === null) {
+    throw new TypeError('prototypeObj cannot be null')
+  }
+  
+  var isPrototype;
+
+  if (Object.getPrototypeOf(object) === prototypeObj) {
+    isPrototype = true;
+
+  } else if (Object.getPrototypeOf(object) === null) {
+    isPrototype = false; 
+
+  } else {
+    isPrototype = isPrototypeOf(prototypeObj, Object.getPrototypeOf(object));
+    return isPrototype;
+  }
+
+  return isPrototype;
+}
+
+tests({
+  'It should return true if the second argument is a prototype of the first argument.': function() {
+    var cat = {};
+    var myCat = Object.create(cat);
+    eq(isPrototypeOf(cat, myCat), true);
+  },
+
+  'It should return false if the second argument is not a prototype of the first argument.': function() {
+    var cat = {};
+    var dog = {};
+    var myCat = Object.create(cat);
+    eq(isPrototypeOf(dog, myCat), false);
+  },
+
+  'It should work for any number of prototype links.': function() {
+    var feline = {};
+    var cat = Object.create(feline);
+    var myCat = Object.create(cat);
+    eq(isPrototypeOf(feline, myCat), true);
+  },
+
+  'It should throw a TypeError if the first argument is undefined or null.': function() {
+    var cat = {};
+    var myCat = Object.create(cat);
+    var isTypeError = false;
+
+    try {
+      isPrototypeOf(undefined, myCat)
+
+    } catch(e) {
+      isTypeError = (e instanceof TypeError);
+    }
+    eq(isTypeError, true);
+
+    isTypeError = false;
+
+    try {
+      isPrototypeOf(null, myCat)
+
+    } catch(e) {
+      isTypeError = (e instanceof TypeError);
+    }
+    eq(isTypeError, true);
+  }
+
+});  
+
+</script>
